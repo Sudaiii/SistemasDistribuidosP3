@@ -1,4 +1,5 @@
 class Auction{
+
     constructor(messenger, item){
         this.messenger = messenger;
         this.item = item;
