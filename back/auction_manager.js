@@ -1,72 +1,76 @@
 class AuctionManager {
 
-    constructor(messenger) {
-        this.messenger = messenger;
+    constructor() {
         this.auctions = []
-        // this.createAuctions();
     }
 
-    getAuctions() {
-        let auctionStrings = [];
-        for(let i = 0; i < this.auctions.length; i++) {
-            let status = "";
-            if(this.auctions[i].finished) {
-                status = "Finalizada";
-            }
-            else{
-                status = "Disponible";
-            }
-            auctionStrings.push(this.auctions[i].item + " - " + status);
+    initiateAuction(auctionID){
+        if(this.auctions.includes(auctionID)){
+            return true;
         }
-        return auctionStrings;
+        else{
+            // if(db.isAuctionAvailable(auctionID)){
+            //     db.setGUID(auctionID, server.guid);
+            //     De donde se saca este guid? No lo se
+            //     this.auctions.push(auctionID)
+            //     return true;
+            // }
+            // else{
+            //     return false;
+            // }
+        }
     }
 
-    offer(auctionID, clientID, amount){
-        return this.auctions[auctionID].offer(clientID, amount);
+    addUserToAuction(auctionID, userID){
+        if(this.initiateAuction()){
+            // if(db.containsUser(auctionID, userID){
+            //     return 1;
+            // }
+            // else{
+            //     db.addUser(auctionID, userID);
+            //     return 2;
+            // }
+        }
+        else {
+            return 0;
+        }
     }
 
-    addClientToAuction(auctionID, clientID){
-        return this.auctions[auctionID].join(clientID);
+    //TODO: Leave restrictions
+    removeUserFromAuction(auctionID,  userID){
+        if(this.initiateAuction()){
+            // if(!db.containsUser(auctionID, userID){
+            //     return 1;
+            // }
+            // else{
+            //     db.removeUser(auctionID, userID);
+            //     return 2;
+            // }
+        }
+        else {
+            return 0;
+        }
     }
 
-    removeClientFromAuction(auctionID,  clientID){
-        return this.auctions[auctionID].remove(clientID);
+    offer(auctionID, userID, amount){
+        if(this.initiateAuction()){
+            // if(db.containsUser(auctionID, userID){
+            //     return 1;
+            // }
+            // else if(amount <= db.getBestOffer(auctionID)){
+            //     return 2;
+            // }
+            // else{
+            //     db.setBestOffer(auctionID, amount);
+            //     db.setBestOfferor(auctionID, userID);
+            //     return 3;
+            // }
+        }
+        else {
+            return 0;
+        }
     }
 
-    getAuctionInfo(auctionID){
-        let bestOffer = this.auctions[auctionID].bestOffer.toString();
-        let currentWinnerID = this.auctions[auctionID].currentWinnderID.toString();
-        let participants = this.auctions[auctionID].participants.length.toString();
-        return "Subasta: " + this.auctions[auctionID].item + "\n" +
-            "Cantidad de participantes: " + participants + "\n" +
-            "Mejor oferta: " + bestOffer + "\n" +
-            "Cliente de la mejor oferta: " + currentWinnerID + "\n";
-    }
+    //TODO: Hammer logic
 
-    getBestOffer(auctionID){
-        return this.auctions[auctionID].bestOffer;
-    }
-
-    getCurrentWinderID(auctionID){
-        return this.auctions[auctionID].currentWinnderID;
-    }
-
-    isAuctionFinished(auctionID){
-        return this.auctions[auctionID].finished;
-    }
-
-    // createAuctions(){
-    //     try {
-    //         Reader reader = new Reader();
-    //         File file = new File(pathFile);
-    //         reader.loadLines(file.getAbsolutePath());
-    //         ArrayList<String> itemList = reader.getFilesContent();
-    //         for (String item: itemList) {
-    //             Auction auction = new Auction(this.messenger, item);
-    //             this.auctions.add(auction);
-    //         }
-    //     }catch (Exception e){
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
 }
