@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http');
@@ -5,10 +6,12 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3001"
+      origin: "*"
     }
   });
-const port = 3000;
+// environment
+const port = process.env.PORT;
+const address = process.env.ADDRESS;
 
 app.get('/', (req, res) => {
   res.send('hello');
@@ -26,5 +29,5 @@ io.on('connection', (socket) => {
   });
 
 server.listen(port, () => {
-  console.log(`listening on http://localhost:${port}`);
+  console.log(`listening on ${address}:${port}`);
 });
