@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  chatclient:
+    #build: 
+    #  context: .
+    image: 127.0.0.1:5000/chatclient
+    container_name: chatclient
+    ports:
+      - 3001:3001
+    environment:
+      - PORT=3001
+      - ADDRESS=192.168.18.221
