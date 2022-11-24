@@ -4,7 +4,32 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
-const auctionManager = new AuctionManager()
+//const auctionManager = new AuctionManager()
+
+//db things
+const db = require('./database');
+
+async function start(){
+    await db.init();
+    /*const res =  await db.Auctions.addAuction('Tallarines');
+    console.log(res);
+    const res2 = await db.Auctions.addLog('Tallarines', 'Ha ofertado 200 por Tallarines');
+    console.log(res2);
+    const res3 = await db.Auctions.readLog('Tallarines')
+    console.log(res3);
+    const res4 = await db.Auctions.getAllAuctions();
+    console.log(res4);*/
+    const res5 = await db.Auctions.getAllAuctionsList();
+    console.log(res5)
+    //const res6 = await db.Auctions.deleteAuction('Tallarines');
+    //console.log(res6);
+    const res7 = await db.Auctions.setStarted("Tallarines", true);
+    const res8 = await db.Auctions.getStarted("Tallarines");
+    console.log(res8);
+}
+
+start();
+
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -77,3 +102,4 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
     console.log('listening on *:3000');
 });
+
