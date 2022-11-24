@@ -7,6 +7,18 @@ class AuctionManager {
 
     async start(){
         await db.init();
+        const ad = await db.dbw.addAuction("Tallarines")
+        const ad2 = await db.dbw.setGUID("Tallarines", 4)
+        const res = await db.dbw.addParticipant("Tallarines",1)
+        const res2 = await db.dbw.addParticipant("Tallarines",2)
+        const res3 = await db.dbw.removeParticipant("Tallarines", 2)
+
+        const res5 = await db.dbw.setFinished("Tallarines", true)
+        const res4 = await db.dbw.isAuctionAvailable("Tallarines")
+        console.log(res4)
+
+        const res6 = await db.dbw.containsUser("Tallarines", 8);
+        console.log("existe participante ",res6)
     }
 
     initiateAuction(auctionID){

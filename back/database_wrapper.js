@@ -4,7 +4,7 @@ class DBWrapper {
     }
 
     async addAuction(itemName){
-        const newAuction = await this.collection.insertOne( { item: itemName, participants: [], started: false, finished: false, bestOffer: 0, log:[] });
+        const newAuction = await this.collection.insertOne( { item: itemName, participants: [], started: false, finished: false, bestOffer: 0, bestOfferor: 0, log:[], guid: 0});
         return newAuction;
     }
 
@@ -73,6 +73,79 @@ class DBWrapper {
         const query = { item: item };
         const result = await this.collection.findOne(query);
         return result.finished;
+    }
+
+    async addParticipant(item, id){
+        const query = { item: item };
+        const updateDocument = {
+            $push : {"participants": id}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async removeParticipant(item, id){
+        const query = { item: item };
+        const updateDocument = {
+            $pull : {"participants": id}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async setGUID(item, guid){
+        const query = { item: item };
+        const updateDocument = {
+            $set : {"guid": guid}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async isAuctionAvailable(item){
+        const query = { item: item, finished: false}
+        let exists = await this.collection.find(query).count() > 0;
+        if (!exists) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    async containsUser(item, userID){
+        const query = { item: item }
+        let document = await this.collection.findOne(query)
+        for (const value of document.participants) {
+            if (value == userID){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    async setBestOffer(item, amount){
+        const query = { item: item };
+        const updateDocument = {
+            $set : {"bestOffer": amount}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async getBestOffer(item){
+        const query = { item: item};
+        let document = await this.collection.findOne(query)
+        return document.bestOffer;
+    }
+
+    async setBestOfferor(item, userID){
+        const query = { item: item };
+        const updateDocument = {
+            $set : {"bestOfferor": userID}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async getBestOfferor(item){
+        const query = { item: item};
+        let document = await this.collection.findOne(query)
+        return document.bestOfferor;
     }
 }
 
