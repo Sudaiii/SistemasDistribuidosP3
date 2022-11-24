@@ -101,19 +101,14 @@ class DBWrapper {
 
     async isAuctionAvailable(item){
         const query = { item: item, finished: false}
-        let exists = await this.collection.find(query).count() > 0;
-        if (!exists) {
-            return false;
-        }else{
-            return true;
-        }
+        return await this.collection.count(query) > 0;
     }
 
     async containsUser(item, userID){
         const query = { item: item }
         let document = await this.collection.findOne(query)
         for (const value of document.participants) {
-            if (value == userID){
+            if (value === userID){
                 return true;
             }
         }

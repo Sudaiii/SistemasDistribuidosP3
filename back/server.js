@@ -73,6 +73,10 @@ io.on('connection', async (socket) => {
             socket.emit('result', 'Error: Auction not available');
         }
     });
+    // socket.on('chat message', async (data) => {
+    //     console.log(data);
+    //     await auctionManager.offer("Tallarines", "2121", 555);
+    // });
 });
 
 app.get('/', (req, res) => {
