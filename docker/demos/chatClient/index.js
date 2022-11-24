@@ -1,14 +1,16 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const port = 3001;
+const serverport = process.env.SERVER_PORT;
+const serveraddress = process.env.SERVER_ADDRESS;
 
 app.use(express.static(__dirname + '/node_modules'));
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
   });
 
-  server.listen(port, () => {
-    console.log(`listening on http://localhost:${port}`);
+  server.listen(process.env.PORT, () => {
+    console.log(`listening on ${serveraddress}:${process.env.PORT}`);
   });
