@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 const uri = "mongodb://localhost/aunt-rich";
 
 //const Users = require('./Users')
-const Auctions = require('./Auctions');
+const DBWrapper = require("./database_wrapper");
 
 class MongoBot {
     constructor() {
@@ -14,7 +14,7 @@ class MongoBot {
         console.log('connected');
 
         this.db = this.client.db("aunt-rich");
-        this.Auctions = new Auctions(this.db);
+        this.dbw = new DBWrapper(this.db);
     }
 }
 

@@ -1,7 +1,12 @@
-class AuctionManager {
+const db = require('./database');
 
+class AuctionManager {
     constructor() {
-        this.auctions = []
+        this.auctions = [];
+    }
+
+    async start(){
+        await db.init();
     }
 
     initiateAuction(auctionID){
@@ -70,7 +75,7 @@ class AuctionManager {
             return 0;
         }
     }
-
     //TODO: Hammer logic
-
 }
+
+module.exports = AuctionManager;

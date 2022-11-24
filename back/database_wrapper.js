@@ -1,4 +1,4 @@
-class Auction {
+class DBWrapper {
     constructor(db) {
         this.collection = db.collection('auctions');
     }
@@ -13,8 +13,7 @@ class Auction {
         const updateDocument = {
             $push : {"log": log}
         };
-        const result = await this.collection.updateOne(query, updateDocument);
-        return result;
+        return await this.collection.updateOne(query, updateDocument);
     }
 
     async readLog(item){
@@ -26,7 +25,7 @@ class Auction {
     }
 
     /**
-     * @return {Array} return the array of auctions with all his attributes
+     * @return {Array} return an array with all auctions and their attributes
      */
     async getAllAuctions(){
         let auctions = await this.collection.find().toArray();
@@ -53,8 +52,7 @@ class Auction {
         const updateDocument = {
             $set : {"started": state}
         };
-        const result = await this.collection.updateOne(query, updateDocument);
-        return result;
+        return await this.collection.updateOne(query, updateDocument);
     }
 
     async setFinished(item, state){
@@ -62,17 +60,7 @@ class Auction {
         const updateDocument = {
             $set : {"finished": state}
         };
-        const result = await this.collection.updateOne(query, updateDocument);
-        return result;
-    }
-
-    async setFinished(item, state){
-        const query = { item: item };
-        const updateDocument = {
-            $set : {"finished": state}
-        };
-        const result = await this.collection.updateOne(query, updateDocument);
-        return result;
+        return await this.collection.updateOne(query, updateDocument);
     }
 
     async getStarted(item){
@@ -86,7 +74,6 @@ class Auction {
         const result = await this.collection.findOne(query);
         return result.finished;
     }
-
 }
 
-module.exports = Auction;
+module.exports = DBWrapper;
