@@ -6,15 +6,25 @@ const http = require('http');
 const server = http.createServer(app);
 
 const { Server } = require("socket.io");
-const redis = require("socket.io-redis");
-io.adapter(redis({ host: "localhost", port: 6379 }));
 
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
+
+const pubClient = createClient({ url: "redis://192.168.18.221:6379" });
+const subClient = pubClient.duplicate();
+
+pubClient.connect();
+subClient.connect();
+
+pubClient.on("error", (err) => {
+  console.log(err);
+});
 const io = new Server(server, {
   cors: {
     origin: "*"
   }
 });
-
+io.adapter(createAdapter(pubClient, subClient));
 // environment
 const port = process.env.PORT;
 const address = process.env.ADDRESS;

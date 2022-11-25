@@ -8,11 +8,17 @@ services:
     container_name: chatserver
     ports:
       - 3000:3000
-    deploy:
-      mode: replicated
-      replicas: 2
-      labels:
-        description: "chat server services"
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+    #   labels:
+    #     description: "chat server services"
     environment:
       - PORT=3000
       - ADDRESS=192.168.18.221
+    links:
+      - redis
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
