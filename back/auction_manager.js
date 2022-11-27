@@ -2,32 +2,16 @@ const db = require('./database');
 
 class AuctionManager {
     constructor() {
-        this.auctions = [];
     }
 
     async start(){
         await db.init();
-    }
 
-    async initiateAuction(auctionID){
-        if(this.auctions.includes(auctionID)){
-            return true;
-        }
-        else{
-            if(await db.dbw.isAuctionAvailable(auctionID)){
-                //TODO: where does the guid come from?
-                await db.dbw.setGUID(auctionID, 0);
-                this.auctions.push(auctionID);
-                return true;
-            }
-            else{
-                return false;
-            }
-        }
+        const ad = await db.dbw.addAuction("Tallarines")
     }
 
     async addUserToAuction(auctionID, userID){
-        if(await this.initiateAuction(auctionID)){
+        if(await db.dbw.isAuctionAvailable(auctionID)){
             let contains = await db.dbw.containsUser(auctionID, userID)
             if(contains){
                 return 1;
@@ -44,7 +28,7 @@ class AuctionManager {
 
     //TODO: restrictions?
     async removeUserFromAuction(auctionID,  userID){
-        if(await this.initiateAuction(auctionID)){
+        if(await db.dbw.isAuctionAvailable(auctionID)){
             if(!await db.dbw.containsUser(auctionID, userID)){
                 return 1;
             }
@@ -59,7 +43,7 @@ class AuctionManager {
     }
 
     async offer(auctionID, userID, amount){
-        if(await this.initiateAuction(auctionID)){
+        if(await db.dbw.isAuctionAvailable(auctionID)){
             if(!await db.dbw.containsUser(auctionID, userID)){
                 return 1;
             }
