@@ -91,14 +91,6 @@ class DBWrapper {
         return await this.collection.updateOne(query, updateDocument);
     }
 
-    async setGUID(item, guid){
-        const query = { item: item };
-        const updateDocument = {
-            $set : {"guid": guid}
-        };
-        return await this.collection.updateOne(query, updateDocument);
-    }
-
     async isAuctionAvailable(item){
         const query = { item: item, finished: false}
         return await this.collection.count(query) > 0;
