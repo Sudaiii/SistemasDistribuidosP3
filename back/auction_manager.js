@@ -7,7 +7,7 @@ class AuctionManager {
     async start(){
         await db.init();
 
-        const ad = await db.dbw.addAuction("Tallarines")
+        // const ad = await db.dbw.addAuction("Tallarines")
     }
 
     async addUserToAuction(auctionID, userID){
@@ -26,7 +26,6 @@ class AuctionManager {
         }
     }
 
-    //TODO: restrictions?
     async removeUserFromAuction(auctionID,  userID){
         if(await db.dbw.isAuctionAvailable(auctionID)){
             if(!await db.dbw.containsUser(auctionID, userID)){
