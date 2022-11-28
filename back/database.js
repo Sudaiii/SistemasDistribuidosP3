@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-require("dotenv").config();
 
 //const uri = "mongodb://localhost/aunt-rich";
 const uri = process.env.DB_CONNECTION;

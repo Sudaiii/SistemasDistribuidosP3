@@ -11,6 +11,7 @@ async function start(){
     await auctionManager.start();
 }
 
+//TODO: extraHeaders
 io.on('connection', async (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
@@ -73,18 +74,18 @@ io.on('connection', async (socket) => {
             socket.emit('result', 'Error: Auction not available');
         }
     });
-    socket.on('chat message', async (data) => {
-        console.log(data);
-        if(data == "join"){
-            await auctionManager.addUserToAuction("Tallarines", "2121");
-        }
-        else if(data == "leave"){
-            await auctionManager.removeUserFromAuction("Tallarines", "2121")
-        }
-        else if(data == "offer"){
-            await auctionManager.offer("Tallarines", "2121", 555);
-        }
-    });
+    // socket.on('chat message', async (data) => {
+    //     console.log(data);
+    //     if(data == "join"){
+    //         await auctionManager.addUserToAuction("Tallarines", "2121");
+    //     }
+    //     else if(data == "leave"){
+    //         await auctionManager.removeUserFromAuction("Tallarines", "2121")
+    //     }
+    //     else if(data == "offer"){
+    //         await auctionManager.offer("Tallarines", "2121", 555);
+    //     }
+    // });
 });
 
 app.get('/', (req, res) => {
