@@ -3,9 +3,24 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+      origin: "*"
+    }
+  });
 const AuctionManager = require('./auction_manager');
 const auctionManager = new AuctionManager();
+
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
+
+const pubClient = createClient({ url: "redis://192.168.18.221:6379" });
+const subClient = pubClient.duplicate();
+
+pubClient.connect();
+subClient.connect();
+
+io.adapter(createAdapter(pubClient, subClient));
 
 async function start(){
     await auctionManager.start();
@@ -74,18 +89,18 @@ io.on('connection', async (socket) => {
             socket.emit('result', 'Error: Auction not available');
         }
     });
-    // socket.on('chat message', async (data) => {
-    //     console.log(data);
-    //     if(data == "join"){
-    //         await auctionManager.addUserToAuction("Tallarines", "2121");
-    //     }
-    //     else if(data == "leave"){
-    //         await auctionManager.removeUserFromAuction("Tallarines", "2121")
-    //     }
-    //     else if(data == "offer"){
-    //         await auctionManager.offer("Tallarines", "2121", 555);
-    //     }
-    // });
+    socket.on('chat message', async (data) => {
+        console.log(data);
+        if(data == "join"){
+            await auctionManager.addUserToAuction("Tallarines", "2121");
+        }
+        else if(data == "leave"){
+            await auctionManager.removeUserFromAuction("Tallarines", "2121")
+        }
+        else if(data == "offer"){
+            await auctionManager.offer("Tallarines", "2121", 555);
+        }
+    });
 });
 
 app.get('/', (req, res) => {

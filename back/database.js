@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 
-//const uri = "mongodb://localhost/aunt-rich";
+//const uri = "mongodb://192.168.18.221:27017/aunt-rich";
 const uri = process.env.DB_CONNECTION;
 
 const DBWrapper = require("./database_wrapper");

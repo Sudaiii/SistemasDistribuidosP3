@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  chatserver:
+    #build: 
+    #  context: .
+    image: 127.0.0.1:5000/chatserver
+    container_name: chatserver
+    ports:
+      - 3000:3000
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+    #   labels:
+    #     description: "chat server services"
+    environment:
+      - PORT=3000
+      - ADDRESS=192.168.18.221
+    links:
+      - redis
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
