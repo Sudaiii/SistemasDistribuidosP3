@@ -23,15 +23,15 @@ io.on('connection', async (socket) => {
     socket.on('join', async (data) => {
         console.log(socket.id + ': ' + data.userID + ' joins ' + data.auctionID);
         let result = auctionManager.addUserToAuction(data.userID, data.auctionID);
-        if(result === 2){
+        if(result == 2){
             socket.join(data.auctionID);
             socket.emit('result', 'Success: User joined auction');
             io.to(data.auctionID).emit('message', (data.userID + ' has joined the auction'));
         }
-        else if(result === 1){
+        else if(result == 1){
             socket.emit('result', 'Error: User already in auction');
         }
-        else if(result === 0){
+        else if(result == 0){
             socket.emit('result', 'Error: Auction not available');
         }
     });
@@ -41,15 +41,15 @@ io.on('connection', async (socket) => {
     socket.on('leave', async (data) => {
         console.log(socket.id + ': ' + data.userID + ' leaves ' + data.auctionID);
         let result = auctionManager.removeUserFromAuction(data.userID, data.auctionID);
-        if(result === 2){
+        if(result == 2){
             socket.leave(data.auctionID);
             socket.emit('result', 'Success: User left auction');
             io.to(data.auctionID).emit('message', (data.userID + ' has left the auction'));
         }
-        else if(result === 1){
+        else if(result == 1){
             socket.emit('result', 'Error: User in auction');
         }
-        else if(result === 0){
+        else if(result == 0){
             socket.emit('result', 'Error: Auction not available');
         }
     });
@@ -60,14 +60,14 @@ io.on('connection', async (socket) => {
     socket.on('offer', async (data) => {
         console.log(socket.id + ': ' + data.userID + ' offers ' + data.auctionID + ' amount ' + data.amount);
         let result = auctionManager.offer(data.userID, data.auctionID, data.amount);
-        if(result === 3){
+        if(result == 3){
             socket.emit('result', 'Success: Offer of ' + data.amount + 'made for ' + data.auctionID);
             io.to(data.auctionID).emit('message', (data.userID + ' has offered ' + data.amount));
         }
-        else if(result === 2){
+        else if(result == 2){
             socket.emit('result', 'Error: Offer lower than current best offer');
         }
-        else if(result === 1){
+        else if(result == 1){
             socket.emit('result', 'Error: User not in auction');
         }
         else if(result === 0){
@@ -96,7 +96,7 @@ server.listen(3000, () => {
     console.log('listening on *:3000');
 });
 
-start();
+await start();
 
 
 

@@ -4,8 +4,16 @@ class DBWrapper {
     }
 
     async addAuction(itemName){
-        const newAuction = await this.collection.insertOne( { item: itemName, participants: [], started: false, finished: false, bestOffer: 0, bestOfferor: 0, log:[], guid: 0});
-        return newAuction;
+        return await this.collection.insertOne({
+            item: itemName,
+            participants: [],
+            started: false,
+            finished: false,
+            bestOffer: 0,
+            bestOfferor: 0,
+            log: [],
+            guid: 0
+        });
     }
 
     async addLog(item, log){
@@ -28,8 +36,7 @@ class DBWrapper {
      * @return {Array} return an array with all auctions and their attributes
      */
     async getAllAuctions(){
-        let auctions = await this.collection.find().toArray();
-        return auctions;
+        return await this.collection.find().toArray();
     }
 
     async getAllAuctionsList(){
@@ -43,8 +50,7 @@ class DBWrapper {
 
     async deleteAuction(item){
         const query = { item: item};
-        let delAuction = await this.collection.deleteOne(query);
-        return delAuction;
+        return await this.collection.deleteOne(query);
     }
 
     async setStarted(item, state){
