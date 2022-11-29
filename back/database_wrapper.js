@@ -1,19 +1,29 @@
+const img_holder = require("./img_holder")
+const imageHolder = new img_holder();
+
 class DBWrapper {
     constructor(db) {
         this.collection = db.collection('auctions');
     }
 
     async addAuction(itemName){
-        return await this.collection.insertOne({
-            item: itemName,
-            participants: [],
-            started: false,
-            finished: false,
-            bestOffer: 0,
-            bestOfferor: 0,
-            log: [],
-            guid: 0
-        });
+        if (await this.collection.count({item: itemName})>0){
+            console.log("The item", itemName, "is already an auction")
+            return false;
+        }else{
+            return await this.collection.insertOne({
+                item: itemName,
+                participants: [],
+                started: false,
+                finished: false,
+                bestOffer: 0,
+                bestOfferor: 0,
+                log: [],
+                guid: 0,
+                img: imageHolder.placeholderimage()
+            });
+        }
+
     }
 
     async addLog(item, log){
@@ -39,6 +49,9 @@ class DBWrapper {
         return await this.collection.find().toArray();
     }
 
+    /**
+     * @return {Array} return an array with all auctions names
+     */
     async getAllAuctionsList(){
         let auctions = await this.collection.find().toArray();
         let listNames = []
@@ -55,18 +68,31 @@ class DBWrapper {
 
     async setStarted(item, state){
         const query = { item: item };
-        const updateDocument = {
-            $set : {"started": state}
-        };
-        return await this.collection.updateOne(query, updateDocument);
+        const docQuery = await this.collection.findOne(query)
+        if (docQuery.started === state){
+            console.log(item, "is already in started state:", state);
+            return false
+        }else{
+            const updateDocument = {
+                $set : {"started": state}
+            };
+            return await this.collection.updateOne(query, updateDocument);
+        }
     }
 
     async setFinished(item, state){
         const query = { item: item };
-        const updateDocument = {
-            $set : {"finished": state}
-        };
-        return await this.collection.updateOne(query, updateDocument);
+        const docQuery = await this.collection.findOne(query)
+        if (docQuery.finished === state){
+            console.log(item, "is already in finished state:", state);
+            return false
+        }else{
+            const updateDocument = {
+                $set : {"finished": state}
+            };
+            return await this.collection.updateOne(query, updateDocument);
+        }
+
     }
 
     async getStarted(item){
@@ -82,11 +108,17 @@ class DBWrapper {
     }
 
     async addParticipant(item, id){
-        const query = { item: item };
-        const updateDocument = {
-            $push : {"participants": id}
-        };
-        return await this.collection.updateOne(query, updateDocument);
+        if (await this.containsUser(item, id)){
+            console.log("The participant with the id", id, "is already participating on the auction");
+            return false;
+        }else{
+            const query = { item: item };
+            const updateDocument = {
+                $push : {"participants": id}
+            };
+            return await this.collection.updateOne(query, updateDocument);
+        }
+
     }
 
     async removeParticipant(item, id){
@@ -139,6 +171,22 @@ class DBWrapper {
         const query = { item: item};
         let document = await this.collection.findOne(query)
         return document.bestOfferor;
+    }
+
+    async setImage(item, image){
+        const query = { item: item };
+        const updateDocument = {
+            $set : {"img": image}
+        };
+        return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async setDefaultImage(item){
+        const query = { item: item };
+        const updateDocument = {
+            $set : {"img": imageHolder.placeholderimage()}
+        };
+        return await this.collection.updateOne(query, updateDocument);
     }
 }
 
