@@ -14,12 +14,10 @@ class DBWrapper {
             return await this.collection.insertOne({
                 item: itemName,
                 participants: [],
-                started: false,
                 finished: false,
                 bestOffer: 0,
                 bestOfferor: 0,
                 log: [],
-                guid: 0,
                 img: imageHolder.placeholderimage()
             });
         }
