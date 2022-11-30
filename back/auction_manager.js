@@ -7,7 +7,7 @@ class AuctionManager {
     async start(){
         await db.init();
 
-        const ad = await db.dbw.addAuction("calcetines");
+        const ad = await db.dbw.addAuction("Tallarines");
     }
 
     async addUserToAuction(auctionID, userID){
@@ -18,6 +18,7 @@ class AuctionManager {
             }
             else{
                 await db.dbw.addParticipant(auctionID, userID);
+                await db.dbw.addLog(auctionID, userID + " has joined auction " + auctionID);
                 return 2;
             }
         }
@@ -26,13 +27,14 @@ class AuctionManager {
         }
     }
 
-    async removeUserFromAuction(auctionID,  userID){
+    async removeUserFromAuction(auctionID, userID){
         if(await db.dbw.isAuctionAvailable(auctionID)){
             if(!await db.dbw.containsUser(auctionID, userID)){
                 return 1;
             }
             else{
                 await db.dbw.removeParticipant(auctionID, userID)
+                await db.dbw.addLog(auctionID, userID + " has left auction " + auctionID);
                 return 2;
             }
         }
@@ -52,6 +54,7 @@ class AuctionManager {
             else{
                 await db.dbw.setBestOffer(auctionID, amount);
                 await db.dbw.setBestOfferor(auctionID, userID);
+                await db.dbw.addLog(auctionID, userID + " has offered " + amount + " to auction " + auctionID);
                 return 3;
             }
         }
@@ -59,7 +62,27 @@ class AuctionManager {
             return 0;
         }
     }
-    //TODO: Hammer logic
+
+    async finishAuction(auctionID){
+        if(await db.dbw.isAuctionAvailable(auctionID)){
+            await db.dbw.setFinished(auctionID);
+            await db.dbw.addLog(auctionID, auctionID + " has been finished");
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    async getAuctionWinner(auctionID){
+        if(await db.dbw.isAuctionExisting(auctionID)){
+            return {'Offeror': await db.dbw.getBestOfferor(auctionID), 'Offer': await db.dbw.getBestOffer(auctionID)};
+        }
+        else{
+            return {'Error': 'Auction does not exist'};
+        }
+    }
+
 }
 
 module.exports = AuctionManager;

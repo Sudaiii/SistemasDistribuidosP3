@@ -7,12 +7,10 @@ class DBWrapper {
         return await this.collection.insertOne({
             item: itemName,
             participants: [],
-            started: false,
             finished: false,
             bestOffer: 0,
             bestOfferor: 0,
             log: [],
-            guid: 0
         });
     }
 
@@ -95,6 +93,11 @@ class DBWrapper {
             $pull : {"participants": id}
         };
         return await this.collection.updateOne(query, updateDocument);
+    }
+
+    async isAuctionExisting(item){
+        const query = { item: item}
+        return await this.collection.count(query) > 0;
     }
 
     async isAuctionAvailable(item){
