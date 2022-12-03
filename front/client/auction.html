@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            background-color: #FCFBFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #wrapper {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #181E38;
+        }
+        #one {
+            grid-column: 1 / 6;
+            grid-row: 1;
+        }
+        #two {
+            grid-column: 6 / 7;
+            grid-row: 1;
+            padding: 0.5rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+        }
+
+        #form {
+            padding: 0.25rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+
+        #input {
+            border: none;
+            background-color: #FCFBFF!important;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem 1rem;
+            overflow: hidden;
+        }
+
+        #input:focus {
+            outline: none;
+            border: 3px solid #5263f8;
+        }
+
+        #form>button {
+            background: #5263f8;
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #FCFBFF;
+        }
+
+        #leaveButton {
+            background: #E06063;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 3px;
+            outline: none;
+            width: calc(100% - 1rem);
+            color: #FCFBFF;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages>li {
+            padding: 0.5rem 1rem;
+        }
+
+        #messages>li:nth-child(odd) {
+            background: #F1F0FE;
+        }
+        .username{
+            font-weight: bold;
+            font-style: italic;
+        }
+        .messagesManager {
+            text-align: center;
+            font-weight: bold;
+            background-color: #5263f8!important;
+            color: #f1f0fe;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <ul id="messages"></ul>
+    <div id="wrapper">
+        <div id="one">
+            <form id="form" action="">
+                <input type="number" id="input" autocomplete="off" /><button>BID UP</button>
+            </form>
+        </div>
+            <!--<form id="form2" action="">
+                <input id="input2" autocomplete="off" /><button>Server says</button>
+            </form>-->
+        <div id="two"><button id="leaveButton" onclick="location.href='http://localhost:3001/home'">LEAVE</button></div>
+    </div>
+
+
+    <script src="/socket.io/client-dist/socket.io.js"></script>
+    <script>
+        const user= JSON.parse(localStorage.getItem('user')).user
+        let socket = io(`localhost:3000`, { transports: [ "websocket" ] });
+        let form = document.getElementById('form');
+        let input = document.getElementById('input');
+        socket.emit('register', { user: user });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+        /*form2.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input2.value) {
+                socket.emit('server message', input2.value);
+                input2.value = '';
+            }
+        });*/
+        socket.on('chat message', function (msg) {
+            let item = document.createElement('li');
+            let span1 = document.createElement("span");
+            let span2 = document.createElement("span");
+            span1.textContent= `${msg.user} says: `;
+            span1.classList.add("username");
+            span2.textContent = `${msg.message}`;
+            item.appendChild(span1);
+            item.appendChild(span2);
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+        socket.on('server message', function (msg) {
+            let item = document.createElement('li');
+            item.classList.add("messagesManager");
+            item.textContent = `${msg}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    </script>
+</body>
+
+</html>

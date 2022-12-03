@@ -46,6 +46,10 @@ io.on('connection', (socket) => {
     console.log(`${uuid} says: ` + msg);
     io.emit('chat message', { message: msg, user: user });
   });
+  socket.on('server message', (msg) => {
+    console.log(msg);
+    io.emit('server message', { message: msg });
+  });
   socket.on('register', (data) => {
     console.log(`user ${uuid} registered as ${data.user}`);
     user = data.user;

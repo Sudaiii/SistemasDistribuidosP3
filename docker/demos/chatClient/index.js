@@ -8,7 +8,7 @@ const serveraddress = process.env.SERVER_ADDRESS;
 
 app.use(express.static(__dirname + '/node_modules'));
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/auction.html');
   });
 
   server.listen(process.env.PORT, () => {
