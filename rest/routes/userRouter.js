@@ -7,4 +7,6 @@ userRouter.get('/get/:name', userController.getUserByName);
 
 userRouter.get('/getUserAuctions/:name', userController.getUserAuctions);
 
+userRouter.post('/logIn/', userController.logIn);
+
 module.exports = userRouter;

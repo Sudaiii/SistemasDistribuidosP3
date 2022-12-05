@@ -23,6 +23,17 @@ const userController = {
             .catch((err) => {
                 res.status(err.code).json(err);
             });
+    },
+
+    async logIn(req,res){
+        const name = req.body.name;
+        await userService.logIn(name)
+            .then((result) => {
+                res.status(result.code).json(result);
+            })
+            .catch((err) => {
+                res.status(err.code).json(err);
+            });
     }
 };
 
