@@ -3,7 +3,7 @@ const imageHolder = new img_holder();
 
 class DBWrapper {
     constructor(db) {
-        this.collection = db.collection('auctions');
+        this.collection = db.collection('auction');
     }
 
     async addAuction(itemName){
