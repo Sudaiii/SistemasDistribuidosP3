@@ -4,8 +4,8 @@ const app = express();
 const cors = require('cors');
 const moongoose = require("mongoose");
 
-const uri = "mongodb://localhost:27017/aunt-rich"
-// const uri = process.env.DB_CONNECTION;
+// const uri = "mongodb://localhost:27017/aunt-rich"
+const uri = process.env.DB_CONNECTION;
 
 // Router Imports
 const auctionRouter = require('./routes/auctionRouter');

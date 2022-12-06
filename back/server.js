@@ -11,47 +11,57 @@ const io = new Server(server, {
 const AuctionManager = require('./auction_manager');
 const auctionManager = new AuctionManager();
 
-// const { createClient } = require("redis");
-// const { createAdapter } = require("@socket.io/redis-adapter");
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
 
-// const pubClient = createClient({ url: "redis://192.168.18.221:6379" });
-// const subClient = pubClient.duplicate();
-//
-// pubClient.connect();
-// subClient.connect();
-//
-// pubClient.on("error", (err) => {
-//     console.log(err.message);
-// });
-//
-// subClient.on("error", (err) => {
-//     console.log(err.message);
-// });
+const pubClient = createClient({ url: "redis://192.168.18.221:6379" });
+const subClient = pubClient.duplicate();
 
-// io.adapter(createAdapter(pubClient, subClient));
+pubClient.connect();
+subClient.connect();
+
+pubClient.on("error", (err) => {
+    console.log(err.message);
+});
+
+subClient.on("error", (err) => {
+    console.log(err.message);
+});
+
+io.adapter(createAdapter(pubClient, subClient));
 
 async function start(){
     await auctionManager.start();
 }
 
-//TODO: extraHeaders
 io.on('connection', async (socket) => {
+    let user = socket.handshake.headers.user;
+    let role = socket.handshake.headers.role;
+
+    socket.join(user);
+    socket.join(role);
+    let auctions = await auctionManager.getUserAuctions(user);
+    if(auctions.hasOwnProperty('Auctions')){
+        for (const auction of auctions.Auctions) {
+            socket.join(auction);
+        }
+    }
+
     console.log('a user connected');
+
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
     socket.on('join', async (data) => {
         // data:
-        //      userRole: role of the user.
-        //      userID: ID of the user
-        //      auctionID: ID of the auction
-        console.log(socket.id + ': ' + data.userID + ' joins ' + data.auctionID);
-        let result = await auctionManager.addUserToAuction(data.userID, data.auctionID);
+        //      item: item of the auction
+        console.log(socket.id + ': ' + user + ' joins ' + data.item);
+        let result = await auctionManager.addUserToAuction(user, data.item);
         if(result == 2){
-            socket.join(data.auctionID);
+            socket.join(data.item);
             socket.emit('result', 'Success: User joined auction');
-            if(data.userRole !== 'hammerman'){
-                io.to(data.auctionID).emit('message', (data.userID + ' has joined the auction'));
+            if(role !== 'hammerman'){
+                io.to(data.item).emit('message', (user + ' has joined the auction'));
             }
         }
         else if(result == 1){
@@ -63,16 +73,14 @@ io.on('connection', async (socket) => {
     });
     socket.on('leave', async (data) => {
         // data:
-        //      userRole: role of the user.
-        //      userID: ID of the user
-        //      auctionID: ID of the auction
-        console.log(socket.id + ': ' + data.userID + ' leaves ' + data.auctionID);
-        let result = await auctionManager.removeUserFromAuction(data.userID, data.auctionID);
+        //      item: item of the auction
+        console.log(socket.id + ': ' + user + ' leaves ' + data.item);
+        let result = await auctionManager.removeUserFromAuction(user, data.item);
         if(result == 2){
-            socket.leave(data.auctionID);
+            socket.leave(data.item);
             socket.emit('result', 'Success: User left auction');
-            if(data.userRole !== 'hammerman'){
-                io.to(data.auctionID).emit('message', (data.userID + ' has left the auction'));
+            if(role !== 'hammerman'){
+                io.to(data.item).emit('message', (user + ' has left the auction'));
             }
         }
         else if(result == 1){
@@ -84,19 +92,18 @@ io.on('connection', async (socket) => {
     });
     socket.on('offer', async (data) => {
         // data:
-        //      userRole: role of the user. Can't be a hammerman
-        //      userID: ID of the user
-        //      auctionID: ID of the auction
+        //      item: item of the auction
         //      amount: amount offered
-        console.log(socket.id + ': ' + data.userID + ' offers ' + data.auctionID +' amount ' + data.amount);
-        if(data.userRole === 'hammerman'){
+        console.log(data);
+        console.log(socket.id + ': ' + user + ' offers ' + data.item +' amount ' + data.amount);
+        if(role === 'hammerman'){
             socket.emit('result', 'Error: Hammerman is not authorized to make offers');
         }
         else{
-            let result = await auctionManager.offer(data.userID, data.auctionID, data.amount);
+            let result = await auctionManager.offer(user, data.item, data.amount);
             if(result == 3){
-                socket.emit('result', 'Success: Offer of ' + data.amount + 'made for ' + data.auctionID);
-                io.to(data.auctionID).emit('message', (data.userID + ' has offered ' + data.amount));
+                socket.emit('result', 'Success: Offer of ' + data.amount + 'made for ' + data.item);
+                io.to(data.item).emit('message', (user + ' has offered ' + data.amount));
             }
             else if(result == 2){
                 socket.emit('result', 'Error: Offer lower than current best offer');
@@ -111,19 +118,18 @@ io.on('connection', async (socket) => {
     });
     socket.on('finish', async (data) => {
         // data:
-        //      userRole: role of the user. Must be a hammerman
-        //      auctionID: ID of the auction
-        console.log(socket.id + ': finished ' + data.auctionID);
-        if(data.userRole === 'hammerman'){
-            let result = await auctionManager.finishAuction(data.auctionID);
+        //      item: item of the auction
+        console.log(socket.id + ': finished ' + data.item);
+        if(role === 'hammerman'){
+            let result = await auctionManager.finishAuction(data.item);
             if(result === 1){
                 socket.emit('result', 'Success: Auction finished');
-                let winner = await auctionManager.getAuctionWinner(data.auctionID);
-                io.to(data.auctionID).emit('message',
+                let winner = await auctionManager.getAuctionWinner(data.item);
+                io.to(data.item).emit('message',
                     ('La subasta ha finalizado' +
                         'Ganador: ' + winner.Offeror +
                         'Oferta: ' + winner.Offer));
-                io.to(winner.Offeror).emit('notification', ('Won auction ' + data.auctionID));
+                io.to(winner.Offeror).emit('notification', ('Won auction ' + data.item));
             }
             else{
                 socket.emit('error', 'Error: Auction already finished or does not exist');
@@ -136,31 +142,31 @@ io.on('connection', async (socket) => {
     });
     socket.on('hammerman message', async (data) => {
         // data:
-        //      userRole: role of the user. Must be a hammerman
-        //      auctionID: ID of the auction
+        //      item: item of the auction
         //      message: the message the hammerman wants to communicate
         console.log(socket.id + ': ' + data.message);
-        if(data.userRole === 'hammerman'){
+        if(role === 'hammerman'){
             socket.emit('result', 'Success: Message sent');
-            io.to(data.auctionID).emit('message', (data.message));
+            io.to(data.item).emit('message', (data.message));
         }
         else{
             socket.emit('result', 'Error: User not authorized');
         }
     });
     // Test case
-    socket.on('chat message', async (data) => {
-        console.log(data);
-        if(data == "join"){
-            await auctionManager.addUserToAuction("Tallarines", "2121");
-        }
-        else if(data == "leave"){
-            await auctionManager.removeUserFromAuction("Tallarines", "2121")
-        }
-        else if(data == "offer"){
-            await auctionManager.offer("Tallarines", "2121", 555);
-        }
-    });
+    // socket.on('chat message', async (data) => {
+    //     console.log(user)
+    //     console.log(data);
+    //     if(data == "join"){
+    //         await auctionManager.addUserToAuction("Tallarines", user);
+    //     }
+    //     else if(data == "leave"){
+    //         await auctionManager.removeUserFromAuction("Tallarines", user)
+    //     }
+    //     else if(data == "offer"){
+    //         await auctionManager.offer("Tallarines", user, 555);
+    //     }
+    // });
 });
 
 app.get('/', (req, res) => {
