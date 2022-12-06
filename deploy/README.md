@@ -84,3 +84,33 @@ y luego
     docker exec -it <container id> /bin/bash
 
 note that th e id used is the one returned by `docker ps` and not the one fron any of the `docker service ...`
+
+inside the shell execute
+
+    mongosh
+
+and wait for the prompt `test>`
+
+change to the admin db with command
+
+    use admin
+
+initiate the replica set withe next command, replace the ip addresses for the proper ones
+
+    rs.initiate(
+    {
+        _id: "amongo", members: [
+            { _id: 0, host: "<manager01 IP>:27017" },
+            { _id: 1, host: "<worker01 IP>:27017" },
+            { _id: 2, host: "<worker02 IP>:27017" }
+            ]
+        }
+    )
+
+the command should return with no errors
+
+then exit mongosh with the exit command, and exit the container shell with another exit command.
+
+this will have a functional mongo replica set, the URI for maximun redundancy will be, dont forget to use the proper ip addresses.
+
+    mongodb://<manager01 IP>:27017,<worker01 IP>:27018,<worker02 IP>:27019/?replicaSet=amongo
