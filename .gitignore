@@ -1,2 +1,5 @@
 .idea/*
+back/.idea/*
+rest/.idea/*
 back/node_modules/*
+rest/node_modules/*
