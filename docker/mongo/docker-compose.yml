@@ -4,7 +4,9 @@ services:
 
   mongo:
     image: mongo
+    container_name: amongo01
     restart: always
+    command: --replSet rs0 --bind_ip_all
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: bodoque
     #  MONGO_INITDB_ROOT_PASSWORD: lol123

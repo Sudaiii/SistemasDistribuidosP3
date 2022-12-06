@@ -16,7 +16,7 @@ services:
     environment:
       - PORT=3000
       - ADDRESS=192.168.18.221
-      - DB_CONNECTION=mongodb://192.168.18.221:27018/aunt-rich
+      - DB_CONNECTION=mongodb://192.168.18.221:27017/aunt-rich,192.168.18.222:27017/aunt-rich,192.168.18.223:27017/aunt-rich/?replicaSet=amongo
       - DATABASE_USER=root
       - DATABASE_PASS=lol123
     links:
