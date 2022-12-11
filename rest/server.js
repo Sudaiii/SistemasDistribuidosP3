@@ -2,9 +2,9 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-// const uri = "mongodb://localhost:27017/aunt-rich"
+//const uri = "mongodb://localhost:27017/aunt-rich"
 const uri = process.env.DB_CONNECTION;
 
 // Router Imports
@@ -16,7 +16,7 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 //database connection
-moongoose
+mongoose
   .connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -25,7 +25,8 @@ moongoose
   .catch((err) => console.log(err));
 
 // Configuring port
-const port = process.env.PORT || 9000;
+//const port = 3001;
+const port = process.env.PORT;
 
 // Routes definition
 app.get('/', (req, res) => {

@@ -221,7 +221,7 @@ class DBWrapper {
     }
 
     async getUserAuctions(username){
-        const query = { item: item };
+        const query = { name: username };
         let document = await this.userCollection.findOne(query)
         return document.auctions;
     }
