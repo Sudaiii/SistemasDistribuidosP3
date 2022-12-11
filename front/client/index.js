@@ -1,10 +1,13 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const serverport = process.env.SERVER_PORT;
 const serveraddress = process.env.SERVER_ADDRESS;
+
+app.use(cors({ origin: '*' }));
 
 app.use(express.static(__dirname + '/node_modules'));
 app.get('/', (req, res) => {

@@ -71,14 +71,25 @@
     let userinput = document.getElementById('userinput');
     let user = 'meself';
     socket.emit('register', { user: user });
-    userform.addEventListener('submit', function (e) {
+    userform.addEventListener('submit', async function (e) {
       e.preventDefault();
       if (userinput.value) {
         socket.emit('register', { user: userinput.value });
-        window.location.href='http://localhost:3002/home';
-        const userName = {user: userinput.value};
-        localStorage.setItem('user', JSON.stringify(userName));
-
+        console.log(userinput.value)
+        await fetch('http://localhost:3001/user/logIn', {
+            method: 'POST',
+            headers: {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: userinput.value})
+        })
+        .then(response => response.json())
+        .then(response => {
+            window.location.href='http://localhost:3002/home';
+            const data = {user: response.data.name, role: response.data.role}
+            localStorage.setItem('user', JSON.stringify(data));
+        });
       }
     });
   </script>
