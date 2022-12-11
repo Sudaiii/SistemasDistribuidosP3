@@ -35,11 +35,11 @@ async function start(){
 }
 
 io.on('connection', async (socket) => {
-    let user = socket.handshake.headers.user;
-    let role = socket.handshake.headers.role;
-
+    let user = undefined;
+    socket.emit('identify', 'Send user');
+    console.log("handshake:" + user);
     socket.join(user);
-    socket.join(role);
+    // let role = await auctionManager.getUserRole(user);
     let auctions = await auctionManager.getUserAuctions(user);
     if(auctions.hasOwnProperty('Auctions')){
         for (const auction of auctions.Auctions) {
@@ -153,20 +153,20 @@ io.on('connection', async (socket) => {
             socket.emit('result', 'Error: User not authorized');
         }
     });
-    // Test case
-    // socket.on('chat message', async (data) => {
-    //     console.log(user)
-    //     console.log(data);
-    //     if(data == "join"){
-    //         await auctionManager.addUserToAuction("Tallarines", user);
-    //     }
-    //     else if(data == "leave"){
-    //         await auctionManager.removeUserFromAuction("Tallarines", user)
-    //     }
-    //     else if(data == "offer"){
-    //         await auctionManager.offer("Tallarines", user, 555);
-    //     }
-    // });
+    //Test case
+    socket.on('chat message', async (data) => {
+        console.log(user)
+        console.log(data);
+        if(data == "join"){
+            await auctionManager.addUserToAuction("Tallarines", user);
+        }
+        else if(data == "leave"){
+            await auctionManager.removeUserFromAuction("Tallarines", user)
+        }
+        else if(data == "offer"){
+            await auctionManager.offer("Tallarines", user, 555);
+        }
+    });
 });
 
 app.get('/', (req, res) => {

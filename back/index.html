@@ -24,10 +24,7 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             const socket = io({
-                extraHeaders: {
-                    "user": "tester",
-                    "role": "user"
-                }
+                transports: [ "websocket" ],
             });
 
             const form = document.getElementById('form');

@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
 // const uri = "mongodb://localhost:27017/aunt-rich"
 const uri = process.env.DB_CONNECTION;
@@ -16,7 +16,7 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 //database connection
-moongoose
+mongoose
   .connect(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
