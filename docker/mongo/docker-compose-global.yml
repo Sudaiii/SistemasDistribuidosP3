@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  mongo01:
+    hostname: mongo01
+    image: mongo
+    ports:
+      - target: 27017
+        published: 27017
+        protocol: tcp
+        mode: host
+    restart: always
+    deploy:
+      mode: global
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "amongo" ]

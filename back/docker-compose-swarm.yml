@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  auctionserver:
+    #build: 
+    #  context: .
+    image: 127.0.0.1:5000/auctionserver
+    container_name: auctionserver
+    ports:
+      - 3000:3000
+    deploy:
+      mode: replicated
+      replicas: 3
+      labels:
+        description: "auction server services"
+    environment:
+      - PORT=3000
+      - ADDRESS=192.168.0.30
+      - DB_CONNECTION=mongodb://192.168.0.30:27017/aunt-rich,192.168.0.31:27017/aunt-rich,192.168.0.32:27017/aunt-rich/?replicaSet=amongo
+      - DATABASE_USER=root
+      - DATABASE_PASS=lol123
+    links:
+      - redis
+  redis:
+    image: redis:6-alpine
+    ports:
+      - 6379:6379
