@@ -14,7 +14,7 @@ const auctionManager = new AuctionManager();
 const { createClient } = require("redis");
 const { createAdapter } = require("@socket.io/redis-adapter");
 
-const pubClient = createClient({ url: "redis://192.168.18.221:6379" });
+const pubClient = createClient({ url: process.env.MANAGER_IP });
 const subClient = pubClient.duplicate();
 
 pubClient.connect();
