@@ -36,6 +36,7 @@ async function start(){
 
 io.on('connection', async (socket) => {
     let user = undefined;
+    let role = 'user';
     socket.emit('identify', 'Send user');
     console.log("handshake:" + user);
     socket.join(user);
