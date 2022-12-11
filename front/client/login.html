@@ -75,7 +75,7 @@
       e.preventDefault();
       if (userinput.value) {
         socket.emit('register', { user: userinput.value });
-        window.location.href='http://localhost:3001/auction';
+        window.location.href='http://localhost:3002/home';
         const userName = {user: userinput.value};
         localStorage.setItem('user', JSON.stringify(userName));
 
