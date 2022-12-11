@@ -92,6 +92,15 @@ class AuctionManager {
         }
     }
 
+    async getUserRole(username){
+        if(await db.dbw.isUserExisting(username)){
+            return {'Role': await db.dbw.getUserRole(username)};
+        }
+        else{
+            return {'Error': 'User does not exist'};
+        }
+    }
+
 }
 
 module.exports = AuctionManager;

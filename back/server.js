@@ -37,21 +37,31 @@ async function start(){
 io.on('connection', async (socket) => {
     let user = undefined;
     let role = 'user';
-    socket.emit('identify', 'Send user');
-    console.log("handshake:" + user);
-    socket.join(user);
-    // let role = await auctionManager.getUserRole(user);
-    let auctions = await auctionManager.getUserAuctions(user);
-    if(auctions.hasOwnProperty('Auctions')){
-        for (const auction of auctions.Auctions) {
-            socket.join(auction);
-        }
-    }
+
+    socket.emit('handshake', 'user: ?');
 
     console.log('a user connected');
 
     socket.on('disconnect', () => {
         console.log('user disconnected');
+    });
+    socket.on('identify', async (data) => {
+        user = data.user;
+        socket.join(user);
+        console.log(socket.id + " has identified as " + user);
+        let roleData = await auctionManager.getUserRole(user);
+        if(roleData.hasOwnProperty('Role')){
+            role = roleData.Role;
+            socket.join(role);
+            console.log(socket.id + " is " + role);
+        }
+        let auctions = await auctionManager.getUserAuctions(user);
+        if(auctions.hasOwnProperty('Auctions')){
+            for (const auction of auctions.Auctions) {
+                socket.join(auction);
+                console.log(socket.id + " has joined " + auction);
+            }
+        }
     });
     socket.on('join', async (data) => {
         // data:
