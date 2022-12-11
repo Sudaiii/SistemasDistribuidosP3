@@ -37,6 +37,10 @@
                     input.value = '';
                 }
             });
+
+            socket.on('handshake', function(msg) {
+                socket.emit('identify', {'user': 'test'});
+            });
         </script>
     </body>
 </html>

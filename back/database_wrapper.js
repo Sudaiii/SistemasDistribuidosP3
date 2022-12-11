@@ -225,6 +225,12 @@ class DBWrapper {
         let document = await this.userCollection.findOne(query)
         return document.auctions;
     }
+
+    async getUserRole(username){
+        const query = { name: username };
+        let document = await this.userCollection.findOne(query)
+        return document.role;
+    }
 }
 
 module.exports = DBWrapper;
