@@ -4,7 +4,7 @@ const app = express();
 const cors = require('cors');
 const mongoose = require("mongoose");
 
-// const uri = "mongodb://localhost:27017/aunt-rich"
+//const uri = "mongodb://localhost:27017/aunt-rich"
 const uri = process.env.DB_CONNECTION;
 
 // Router Imports
@@ -25,7 +25,8 @@ mongoose
   .catch((err) => console.log(err));
 
 // Configuring port
-const port = process.env.PORT || 9000;
+//const port = 3001;
+const port = process.env.PORT;
 
 // Routes definition
 app.get('/', (req, res) => {
