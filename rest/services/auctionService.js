@@ -18,7 +18,6 @@ const auctionService = {
         try{
             const auction = await auctionSchema.findOne({item:item});
             return{   status: 'Success', code: 200, message: 'Auction with item ' + item + ' is found', data: auction}
-
         }catch(e){
             return{status: 'Failed', code: 400,message: e.message, data: {}}
         }

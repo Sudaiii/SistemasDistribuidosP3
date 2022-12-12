@@ -118,7 +118,7 @@ class DBWrapper {
             };
             await this.auctionCollection.updateOne(auctionQuery, auctionUpdate);
 
-            const userQuery = { item: item };
+            const userQuery = { name: username };
             const userUpdate = {
                 $push : {"auctions": item}
             };
@@ -139,7 +139,7 @@ class DBWrapper {
             };
             await this.auctionCollection.updateOne(auctionQuery, auctionUpdate);
 
-            const userQuery = { item: item };
+            const userQuery = { name: username };
             const userUpdate = {
                 $pull : {"auctions": item}
             };
@@ -161,7 +161,9 @@ class DBWrapper {
     }
 
     async isAuctionAvailable(item){
+        console.log(item);
         const query = { item: item, finished: false}
+        console.log(await this.auctionCollection.count(query)+'Esta cosa')
         return await this.auctionCollection.count(query) > 0;
     }
 
@@ -221,9 +223,15 @@ class DBWrapper {
     }
 
     async getUserAuctions(username){
-        const query = { item: item };
+        const query = { name: username };
         let document = await this.userCollection.findOne(query)
         return document.auctions;
+    }
+
+    async getUserRole(username){
+        const query = { name: username };
+        let document = await this.userCollection.findOne(query)
+        return document.role;
     }
 }
 

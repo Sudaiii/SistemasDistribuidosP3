@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            margin: 0;
+            padding-bottom: 3rem;
+            background-color: #FCFBFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+      #contentCenter {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      #userform {
+          height: 130px;
+          width: 200px;
+          background-color: #181E38;
+          display: inline-block;
+          text-align: center;
+          padding-top: 65px;
+          border-radius: 8px;
+
+      }
+      #userinput {
+          margin: 4px 0;
+          border-radius: 8px;
+          padding: 2px 4px;
+          background-color: #FCFBFF!important;
+      }
+      #userinput:focus{
+          outline: none;
+          border: 3px solid #5263f8;
+      }
+      #userbutton{
+          background: #5263f8;
+          border: none;
+          padding: 0.55rem;
+          margin: 0.25rem;
+          width: 70px;
+          border-radius: 3px;
+          outline: none;
+          color: #FCFBFF;
+      }
+      #labelDiv {
+          text-align: start;
+          padding-left: 16px
+      }
+      #buttonDiv{
+          text-align: end;
+          padding-right: 12px;
+      }
+    </style>
+    <title>Login</title>
+</head>
+<body>
+  <div id="contentCenter">
+    <form id="userform" action="">
+      <div id="labelDiv"><label style="color: #FCFBFF; font-weight: bold">User: </label></div>
+      <div><input id="userinput" autocomplete="off"/></div>
+      <div id="buttonDiv"><button id="userbutton">Send</button></div>
+    </form>
+  </div>
+  <script src="/socket.io/client-dist/socket.io.js"></script>
+  <script>
+    let socket = io(`localhost:3000`, { transports: [ "websocket" ] });
+    let userform = document.getElementById('userform');
+    let userinput = document.getElementById('userinput');
+    let user = 'meself';
+    socket.emit('register', { user: user });
+    userform.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (userinput.value) {
+        socket.emit('register', { user: userinput.value });
+        console.log(userinput.value)
+        await fetch('http://localhost:3001/user/logIn', {
+            method: 'POST',
+            headers: {
+                'Access-Control-Allow-Origin':'*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({name: userinput.value})
+        })
+        .then(response => response.json())
+        .then(response => {
+            window.location.href='http://localhost:3002/home';
+            const data = {user: response.data.name, role: response.data.role}
+            localStorage.setItem('user', JSON.stringify(data));
+        });
+      }
+    });
+  </script>
+</body>
+</html>

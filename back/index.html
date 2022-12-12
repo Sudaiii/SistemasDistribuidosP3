@@ -24,10 +24,7 @@
         <script src="/socket.io/socket.io.js"></script>
         <script>
             const socket = io({
-                extraHeaders: {
-                    "user": "tester",
-                    "role": "user"
-                }
+                transports: [ "websocket" ],
             });
 
             const form = document.getElementById('form');
@@ -39,6 +36,10 @@
                     socket.emit('chat message', input.value);
                     input.value = '';
                 }
+            });
+
+            socket.on('handshake', function(msg) {
+                socket.emit('identify', {'user': user});
             });
         </script>
     </body>

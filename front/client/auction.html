@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        body {
+            margin: 0;
+            padding-bottom: 3rem;
+            background-color: #FCFBFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #wrapper {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 10px;
+            position: fixed;
+            height: 3rem;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #181E38;
+        }
+        #one {
+            grid-column: 1 / 6;
+            grid-row: 1;
+        }
+        #two {
+            grid-column: 6 / 7;
+            grid-row: 1;
+            padding: 0.5rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+        }
+        #wrapperH {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 10px;
+            position: fixed;
+            height: 3rem;
+            bottom: 0;
+            width: 80%;
+            background: #181E38;
+        }
+        #three {
+            grid-column: 1 / 6;
+            grid-row: 1;
+        }
+        #four {
+            grid-column: 6 / 7;
+            grid-row: 1;
+            padding: 0.5rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+        }
+
+        #form {
+            padding: 0.25rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+        #formH {
+            padding: 0.25rem;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            height: 3rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+        }
+        #formH>button {
+            background: #5263f8;
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #FCFBFF;
+        }
+
+        #input {
+            border: none;
+            background-color: #FCFBFF!important;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem 1rem;
+            overflow: hidden;
+        }
+
+        #input:focus {
+            outline: none;
+            border: 3px solid #5263f8;
+        }
+
+        #hammerMessage {
+            border: none;
+            background-color: #FCFBFF!important;
+            padding: 0 1rem;
+            flex-grow: 1;
+            border-radius: 2rem;
+            margin: 0.25rem 1rem;
+            overflow: hidden;
+        }
+
+        #hammerMessage:focus {
+            outline: none;
+            border: 3px solid #5263f8;
+        }
+
+        #form>button {
+            background: #5263f8;
+            border: none;
+            padding: 0 1rem;
+            margin: 0.25rem;
+            border-radius: 3px;
+            outline: none;
+            color: #FCFBFF;
+        }
+
+        #leaveButton {
+            background: #E06063;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 3px;
+            outline: none;
+            width: calc(100% - 1rem);
+            color: #FCFBFF;
+        }
+        #hammerTime {
+            background: #BBBCF9;
+            border: none;
+            padding: 0 1rem;
+            border-radius: 3px;
+            outline: none;
+            width: 100%;
+            color: #141414;
+        }
+
+        #messages {
+            text-align: center;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #messages>li {
+            padding: 0.5rem 1rem;
+        }
+
+        #messages>li:nth-child(odd) {
+            background: #F1F0FE;
+        }
+        .username{
+            font-weight: bold;
+            font-style: italic;
+        }
+        .messagesManager {
+            text-align: center;
+            font-weight: bold;
+            background-color: #5263f8!important;
+            color: #f1f0fe;
+            font-style: italic;
+        }
+        #itemData {
+            height: 20vh;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 10px;
+            grid-auto-rows: minmax(100px, auto);
+            background-color: #5263f8;
+            padding: 6px;
+        }
+        #imgDiv {
+            grid-column: 1;
+            grid-row: 1;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+        #dataDiv {
+            grid-column: 2 / 6;
+            grid-row: 1;
+        }
+        .imgInside{
+            max-height: 20vh;
+
+        }
+        #messagesContainer {
+            max-height: calc(100% - (20vh + 54px));
+            overflow-y: scroll;
+        }
+        /* The snackbar - position it at the bottom and in the middle of the screen */
+        #snackbar {
+            visibility: hidden; /* Hidden by default. Visible on click */
+            min-width: 250px; /* Set a default minimum width */
+            margin-left: -125px; /* Divide value of min-width by 2 */
+            background-color: #333; /* Black background color */
+            color: #fff; /* White text color */
+            text-align: center; /* Centered text */
+            border-radius: 2px; /* Rounded borders */
+            padding: 16px; /* Padding */
+            position: fixed; /* Sit on top of the screen */
+            z-index: 1; /* Add a z-index if needed */
+            left: 50%; /* Center the snackbar */
+            bottom: 30px; /* 30px from the bottom */
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible; /* Show the snackbar */
+            /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+            However, delay the fade out process for 2.5 seconds */
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+    </style>
+</head>
+
+<body>
+    <div id="itemData"></div>
+    <div >
+        <ul id="messages"></ul>
+    </div>
+    <div id="snackbar"></div>
+    <div id="wrapper">
+        <div id="one">
+            <div id="formContainer">
+                <form id="form" action="">
+                    <input type="number" id="input" autocomplete="off" /><button>BID UP</button>
+                </form>
+            </div>
+            <div id="actionsHammerman">
+                <div id="wrapperH">
+                    <div id="three">
+                        <form id="formH" action="">
+                            <input id="hammerMessage" autocomplete="off" /><button>SEND MESSAGE</button>
+                        </form>
+                    </div>
+                    <div id="four">
+                        <button id="hammerTime">FINISH</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+            <!--<form id="form2" action="">
+                <input id="input2" autocomplete="off" /><button>Server says</button>
+            </form>-->
+        <div id="two"><button id="leaveButton">LEAVE</button></div>
+    </div>
+
+
+    <script src="/socket.io/client-dist/socket.io.js"></script>
+    <script>
+        const userData= JSON.parse(localStorage.getItem('user'));
+        const data= JSON.parse(localStorage.getItem('item'));
+        let socket = io(`localhost:3000`, { transports: [ "websocket" ] });
+        let form = document.getElementById('form');
+        let input = document.getElementById('input');
+        let formH = document.getElementById('formH');
+        let hammerMessage = document.getElementById('hammerMessage');
+        socket.on('handshake', function (msg){
+            socket.emit('identify', {user: userData.user})
+            socket.emit('join', data.item);
+        });
+        (userData.role != 'user') ? document.getElementById("formContainer").style.display = "none":document.getElementById("actionsHammerman").style.display = "none";
+
+        leaveButton.onclick = function (){
+            socket.emit('leave', {item: data.item.item});
+            snackbar.textContent = 'Leaving auction';
+            snackbarShow();
+            window.location.href = 'http://localhost:3002/home'
+        };
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('offer', {item: data.item.item, amount: input.value});
+                input.value = '';
+            }
+        });
+        formH.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (hammerMessage.value) {
+                socket.emit('hammerman message', {message: hammerMessage.value, item: data.item.item});
+                hammerMessage.value = '';
+            }
+        });
+        hammerTime.onclick = function () {
+            socket.emit('finish', {item: data.item.item});
+            alert('The auction is over');
+            window.location.href = 'http://localhost:3002/home';
+        }
+
+        const imgDiv = document.createElement('div');
+        imgDiv.setAttribute('id', 'imgDiv');
+        const img = document.createElement('img');
+        img.src = data.item.img;
+        img.classList.add('imgInside')
+        imgDiv.appendChild(img);
+        const dataDiv = document.createElement('div');
+        dataDiv.setAttribute('id', 'dataDiv');
+        dataDiv.textContent = data.item.item;
+
+        itemData.appendChild(imgDiv);
+        itemData.appendChild(dataDiv);
+        // Agregar con socket result respuesta negativa
+        socket.on('message', function (msg) {
+            console.log(msg);
+            if(msg.includes('has offered')){
+                snackbar.textContent = msg;
+                snackbarShow();
+                setLi(msg,1);
+                /*const msgSplit = msg.split('has offered ');
+                console.log(msgSplit);*/
+            }
+            if(msg.includes(' has joined')){
+                const msgSplit = msg.split(' has joined');
+                if(msgSplit[0] !== userData.user){
+                    snackbar.textContent = msg;
+                    snackbarShow();
+                }
+            }
+            if (msg.includes('HammerMessage') && userData.role !== 'hammerman') {
+                const msgSplit = msg.split('HammerMessage');
+                snackbar.textContent = msgSplit[1];
+                snackbarShow();
+            }
+            if (msg.includes('The auction is over') && userData.role !== 'hammerman'){
+                const msgSplit = msg.split(/[,]|([:]\s)+/);
+                if(userData.user !== msgSplit[2]){
+                    snackbar.textContent = msg+ '\nThanks for participating.';
+                    document.getElementById("formContainer").style.display = "none";
+                    setLi(msg+ '\nThanks for participating.', 1);
+                    setLi('Please leave the room, the auction is over', 1);
+
+                }
+
+            }
+            /*let item = document.createElement('li');
+            let span1 = document.createElement("span");
+            let span2 = document.createElement("span");
+            span1.textContent= `${msg.user} says: `;
+            span1.classList.add("username");
+            span2.textContent = `${msg.message}`;
+            item.appendChild(span1);
+            item.appendChild(span2);
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);*/
+        });
+        socket.on('notification', function (msg){
+            snackbar.textContent = msg+'\nCongratulations and thanks for participating';
+            document.getElementById("formContainer").style.display = "none";
+            setLi(msg+'\nCongratulations and thanks for participating',2)
+            setLi('Please leave the room, the auction is over',1)
+        })
+        socket.on('result', function (msg){
+            if(!msg.includes('Success') && !msg.includes('already in auction')) {
+                const msgSplit = msg.split('Error: ')
+                snackbar.textContent = msgSplit[1];
+                snackbarShow();
+            }
+        })
+        socket.on('server message', function (msg) {
+            let item = document.createElement('li');
+            item.classList.add("messagesManager");
+            item.textContent = `${msg}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+        function snackbarShow() {
+            // Get the snackbar DIV
+            var x = document.getElementById("snackbar");
+
+            // Add the "show" class to DIV
+            x.className = "show";
+
+            // After 3 seconds, remove the show class from DIV
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+        function setLi(msg, number){
+            let item = document.createElement('li');
+            let span = document.createElement("span");
+            if(number === 2){
+                item.classList.add("messagesManager");
+            }
+            item.appendChild(span);
+            item.textContent = `${msg}`;
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+    </script>
+</body>
+
+</html>

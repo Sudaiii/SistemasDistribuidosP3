@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        body{
+            margin: 16px;
+            padding-bottom: 3rem;
+            background-color: #FCFBFF;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        #auctionsDiv{
+            height: 74vh;
+            overflow: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+            grid-gap: 10px;
+            grid-auto-rows: fit-content(100%);
+        }
+        .itemAuction {
+            display: grid;
+            background-color: #F1F0FE;
+            border-radius: 8px;
+            align-items: center;
+            width: 100%;
+        }
+        .itemAuction:hover {
+            background-color: #BBBCF9;
+        }
+        .titleAuction{
+            display: flex;
+            margin: 8px 8px;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .imageAuction{
+            display: flex;
+            margin: 0 8px 8px 8px;
+            height: calc(20rem - 16px);
+            min-width: calc(20rem - 16px);
+            overflow: hidden;
+            justify-content: center;
+        }
+        .footerAuction{
+            width: 100%;
+            display: flex;
+            align-self: end;
+        }
+        .buttonEnter {
+            background: #5263f8;
+            border: none;
+            width: 100%!important;
+            padding: 0.55rem;
+            margin: 0 8px 8px 8px;
+            border-radius: 3px;
+            outline: none;
+            color: #FCFBFF;
+        }
+        .buttonEnter:hover{
+            background-color: #181E38;
+            color: #FCFBFF;
+        }
+        .buttonEnter:disabled{
+            background-color: darkgray;
+        }
+        .imageFormat {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div><h2>The rich aunt</h2></div>
+    <div><h3>Articles</h3></div>
+    <div id="auctionsDiv">
+        <!-- Muestra estructura por elemento
+        <div class="itemAuction">
+            <div class="titleAuction">
+                Title
+            </div>
+            <div class="imageAuction">
+                <img id="img">
+            </div>
+            <div class="footerAuction">
+                <button class="buttonEnter">
+                    ENTER
+                </button>
+            </div>
+        </div>-->
+    </div>
+
+    <script src="/socket.io/client-dist/socket.io.js"></script>
+    <script>
+        let socket = io(`localhost:3000`, { transports: [ "websocket" ] });
+        const user= JSON.parse(localStorage.getItem('user')).user;
+        socket.on('handshake', function(msg) {
+            socket.emit('identify', {'user': user});
+        });
+        auctions();
+
+        async function auctions(){
+            await fetch('http://localhost:3001/auction/get-all', {
+                method: 'GET',
+                headers: {
+                    'Access-Control-Allow-Origin':'*',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+                .then(response => {
+                    console.log(response);
+                    const items = response.data;
+                    for (const item of items) {
+                        let itemAuction = document.createElement('div');
+                        itemAuction.classList.add('itemAuction');
+                        let titleAuction = document.createElement('div');
+                        titleAuction.classList.add('titleAuction');
+                        titleAuction.textContent = item.item;
+                        let imgAuction = document.createElement('div');
+                        imgAuction.classList.add('imageAuction');
+                        const img = document.createElement('img');
+                        img.src = item.img;
+                        imgAuction.appendChild(img);
+                        let footerAuction = document.createElement('div');
+                        footerAuction.classList.add('footerAuction');
+                        let buttonAuction = document.createElement('button');
+                        buttonAuction.classList.add('buttonEnter');
+                        buttonAuction.textContent = 'ENTER';
+                        buttonAuction.setAttribute('id', `${item.item}`)
+                        buttonAuction.onclick = function (){
+                            localStorage.setItem('item', JSON.stringify({item}));
+                            window.location.href = 'http://localhost:3002/auction'
+                        };
+                        if (item.finished){
+                            buttonAuction.disabled = true;
+                            buttonAuction.textContent = 'FINISHED';
+                        }
+                        footerAuction.appendChild(buttonAuction);
+                        itemAuction.appendChild(titleAuction);
+                        itemAuction.appendChild(imgAuction);
+                        itemAuction.appendChild(footerAuction);
+                        auctionsDiv.appendChild(itemAuction);
+                    }
+                });
+        }
+
+    </script>
+</body>
+</html>
