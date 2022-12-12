@@ -76,7 +76,7 @@
       if (userinput.value) {
         socket.emit('register', { user: userinput.value });
         console.log(userinput.value)
-        await fetch('192.168.0.30:3001' + '/user/logIn', {
+        await fetch('http://192.168.0.30:3001' + '/user/logIn', {
             method: 'POST',
             headers: {
                 'Access-Control-Allow-Origin':'*',
