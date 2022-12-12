@@ -72,6 +72,11 @@ io.on('connection', async (socket) => {
         if(result == 2){
             socket.join(data.item);
             socket.emit('result', 'Success: User joined auction');
+            let winner = await auctionManager.getAuctionWinner(data.item);
+            io.to(data.item).emit('message',
+                ('startofferor.' + winner.Offeror +
+                    '.' + winner.Offer));
+            console.log('Winner: ' + winner.Offeror + ', Final bid: ' + winner.Offer);
             if(role !== 'hammerman'){
                 io.to(data.item).emit('message', (user + ' has joined the auction'));
             }
@@ -115,6 +120,11 @@ io.on('connection', async (socket) => {
             if(result == 3){
                 socket.emit('result', 'Success: Offer of ' + data.amount + 'made for ' + data.item);
                 io.to(data.item).emit('message', (user + ' has offered ' + data.amount));
+                let winnerAct = await auctionManager.getAuctionWinner(data.item);
+                io.to(data.item).emit('message',
+                    ('startofferor.' + winnerAct.Offeror +
+                        '.' + winnerAct.Offer));
+                console.log('Winner: ' + winnerAct.Offeror + ', Final bid: ' + winnerAct.Offer);
             }
             else if(result == 2){
                 socket.emit('result', 'Error: Offer lower than current best offer');

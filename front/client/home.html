@@ -67,10 +67,49 @@
         .imageFormat {
             width: 100%;
         }
+        #wrapper {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-gap: 10px;
+            position: fixed;
+            height: 3rem;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #5263f8;
+        }
+
+        #one {
+            grid-column: 1 / 5;
+            grid-row: 1;
+            align-self: center;
+            display: flex;
+            padding-left: 16px;
+            color: #efefef;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        #two {
+            grid-column: 5 / 7;
+            grid-row: 1;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            align-self: center;
+            justify-content: end;
+            margin-left: -32px;
+            color: #efefef;
+        }
     </style>
 </head>
 <body>
-    <div><h2>The rich aunt</h2></div>
+    <div id='wrapper'>
+        <div id='one'>
+            <span>The rich aunt</span>
+        </div>
+        <div id='two'></div>
+    </div>
     <div><h3>Articles</h3></div>
     <div id="auctionsDiv">
         <!-- Muestra estructura por elemento
@@ -97,6 +136,7 @@
         socket.on('handshake', function(msg) {
             socket.emit('identify', {'user': user});
         });
+        two.textContent = `Welcome, ${user}`;
         auctions();
 
         async function auctions(){
