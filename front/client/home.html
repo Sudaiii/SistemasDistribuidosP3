@@ -91,7 +91,7 @@
 
     <script src="/socket.io/client-dist/socket.io.js"></script>
     <script>
-        let socket = io(`localhost:3000`, { transports: [ "websocket" ] });
+        let socket = io(process.env.BACK_ADDRESS, { transports: [ "websocket" ] });
         const user= JSON.parse(localStorage.getItem('user')).user;
         socket.on('handshake', function(msg) {
             socket.emit('identify', {'user': user});
@@ -99,7 +99,7 @@
         auctions();
 
         async function auctions(){
-            await fetch('http://localhost:3001/auction/get-all', {
+            await fetch(process.env.REST_ADDRESS + '/auction/get-all', {
                 method: 'GET',
                 headers: {
                     'Access-Control-Allow-Origin':'*',
@@ -129,7 +129,7 @@
                         buttonAuction.setAttribute('id', `${item.item}`)
                         buttonAuction.onclick = function (){
                             localStorage.setItem('item', JSON.stringify({item}));
-                            window.location.href = 'http://localhost:3002/auction'
+                            window.location.href = process.env.FRONT_ADDRESS + /auction';
                         };
                         if (item.finished){
                             buttonAuction.disabled = true;

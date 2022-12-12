@@ -4,8 +4,6 @@ const cors = require('cors');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
-const serverport = process.env.SERVER_PORT;
-const serveraddress = process.env.SERVER_ADDRESS;
 
 app.use(cors({ origin: '*' }));
 
@@ -22,5 +20,5 @@ app.get('/auction', (req, res) => {
 
 
   server.listen(process.env.PORT, () => {
-    console.log(`listening on ${serveraddress}:${process.env.PORT}`);
+    console.log(`listening on ${process.env.FRONT_ADDRESS}`);
   });
