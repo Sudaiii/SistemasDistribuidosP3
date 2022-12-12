@@ -283,7 +283,7 @@
     <script>
         const userData= JSON.parse(localStorage.getItem('user'));
         const data= JSON.parse(localStorage.getItem('item'));
-        let socket = io(process.env.BACK_ADDRESS, { transports: [ "websocket" ] });
+        let socket = io('192.168.0.30:3000', { transports: [ "websocket" ] });
         let form = document.getElementById('form');
         let input = document.getElementById('input');
         let formH = document.getElementById('formH');
@@ -298,7 +298,7 @@
             socket.emit('leave', {item: data.item.item});
             snackbar.textContent = 'Leaving auction';
             snackbarShow();
-            window.location.href = process.env.FRONT_ADDRESS + '/home';
+            window.location.href = '192.168.0.30:3002' + '/home';
         };
         form.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -317,7 +317,7 @@
         hammerTime.onclick = function () {
             socket.emit('finish', {item: data.item.item});
             alert('The auction is over');
-            window.location.href = process.env.FRONT_ADDRESS + '/home';
+            window.location.href = '192.168.0.30:3002' + '/home';
         }
 
         const imgDiv = document.createElement('div');
