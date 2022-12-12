@@ -299,7 +299,7 @@
             socket.emit('leave', {item: data.item.item});
             snackbar.textContent = 'Leaving auction';
             snackbarShow();
-            window.location.href = base + ':3002' + '/home';
+            window.location.href = 'http://192.168.0.30:3002/home';
         };
         form.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -318,7 +318,7 @@
         hammerTime.onclick = function () {
             socket.emit('finish', {item: data.item.item});
             alert('The auction is over');
-            window.location.href = base + ':3002' + '/home';
+            window.location.href = 'http://192.168.0.30:3002/home';
         }
 
         const imgDiv = document.createElement('div');

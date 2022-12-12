@@ -87,7 +87,7 @@
         })
         .then(response => response.json())
         .then(response => {
-            window.location.href=base + ':3002' + '/home';
+            window.location.href='http://192.168.0.30:3002/home';
             const data = {user: response.data.name, role: response.data.role}
             localStorage.setItem('user', JSON.stringify(data));
         });
