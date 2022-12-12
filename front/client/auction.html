@@ -397,6 +397,9 @@
             messages.appendChild(item);
             window.scrollTo(0, document.body.scrollHeight);
         });
+        socket.on('disconnect', function () {
+            window.location.assign('http://192.168.0.30:3002/home');
+        });
         function snackbarShow() {
             // Get the snackbar DIV
             var x = document.getElementById("snackbar");

@@ -10,7 +10,7 @@ services:
       - 3002:3002
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       labels:
         description: "auction client services"
     environment:
