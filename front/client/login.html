@@ -66,7 +66,8 @@
   </div>
   <script src="/socket.io/client-dist/socket.io.js"></script>
   <script>
-    let socket = io('192.168.0.30:3000', { transports: [ "websocket" ] });
+    let base = 'http://192.168.0.30'  
+    let socket = io(base + ':3000', { transports: [ "websocket" ] });
     let userform = document.getElementById('userform');
     let userinput = document.getElementById('userinput');
     let user = 'meself';
@@ -76,7 +77,7 @@
       if (userinput.value) {
         socket.emit('register', { user: userinput.value });
         console.log(userinput.value)
-        await fetch('http://192.168.0.30:3001' + '/user/logIn', {
+        await fetch(base + ':3001' + '/user/logIn', {
             method: 'POST',
             headers: {
                 'Access-Control-Allow-Origin':'*',
@@ -86,7 +87,7 @@
         })
         .then(response => response.json())
         .then(response => {
-            window.location.href='192.168.0.30:3002' + '/home';
+            window.location.href=base + ':3002' + '/home';
             const data = {user: response.data.name, role: response.data.role}
             localStorage.setItem('user', JSON.stringify(data));
         });
