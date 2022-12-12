@@ -88,7 +88,7 @@
         .then(response => response.json())
         .then(response => {
             const data = {user: response.data.name, role: response.data.role}
-            localStorage.setItem('user', JSON.stringify(data));
+            sessionStorage.setItem('user', JSON.stringify(data));
             window.location.assign('http://192.168.0.30:3002/home');
         });
       }
