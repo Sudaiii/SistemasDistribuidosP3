@@ -7,7 +7,7 @@ class AuctionManager {
     async start(){
         await db.init();
 
-        // const ad = await db.dbw.addAuction("Tallarines");
+        const ad = await db.dbw.addAuction("Tallarines");
     }
 
     async addUserToAuction(item, username){

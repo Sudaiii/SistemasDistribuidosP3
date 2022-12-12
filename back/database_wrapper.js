@@ -18,7 +18,7 @@ class DBWrapper {
                 participants: [],
                 finished: false,
                 bestOffer: 0,
-                bestOfferor: 0,
+                bestOfferor: "",
                 log: [],
                 img: imageHolder.placeholderimage()
             });

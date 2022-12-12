@@ -304,7 +304,7 @@
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             if (input.value) {
-                socket.emit('offer', {item: data.item.item, amount: input.value});
+                socket.emit('offer', {item: data.item.item, amount: parseInt(input.value)});
                 input.value = '';
             }
         });
