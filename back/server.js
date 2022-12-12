@@ -55,14 +55,14 @@ io.on('connection', async (socket) => {
             socket.join(role);
             console.log(socket.id + " is " + role);
         }
-        let auctions = await auctionManager.getUserAuctions(user);
-        console.log(auctions);
-        if(auctions.hasOwnProperty('Auctions')){
-            for (const auction of auctions.Auctions) {
-                socket.join(auction);
-                console.log(socket.id + " has joined " + auction);
-            }
-        }
+        // let auctions = await auctionManager.getUserAuctions(user);
+        // console.log(auctions);
+        // if(auctions.hasOwnProperty('Auctions')){
+        //     for (const auction of auctions.Auctions) {
+        //         socket.join(auction);
+        //         console.log(socket.id + " has joined " + auction);
+        //     }
+        // }
     });
     socket.on('join', async (data) => {
         // data:
