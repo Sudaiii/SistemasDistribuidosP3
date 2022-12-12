@@ -1,5 +1,7 @@
 .idea/*
 back/.idea/*
 rest/.idea/*
+front/.idea/*
 back/node_modules/*
 rest/node_modules/*
+front/node_modules/*

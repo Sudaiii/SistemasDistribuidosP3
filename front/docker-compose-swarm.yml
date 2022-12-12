@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  auctionclient:
+    #build: 
+    #  context: .
+    image: 127.0.0.1:5000/auctionclient
+    container_name: auctionclient
+    ports:
+      - 3002:3002
+    deploy:
+      mode: replicated
+      replicas: 3
+      labels:
+        description: "auction client services"
+    environment:
+      - SERVER_PORT=3000
+      - SERVER_ADDRESS=http://localhost
+      - PORT=3002

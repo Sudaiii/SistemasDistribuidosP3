@@ -14,18 +14,15 @@ class AuctionManager {
         if(await db.dbw.isAuctionAvailable(item)){
             let contains = await db.dbw.containsUser(item, username)
             if(contains){
-                console.log('1 res');
                 return 1;
             }
             else{
                 await db.dbw.addParticipant(item, username);
                 await db.dbw.addLog(item, username + " has joined auction " + item);
-                console.log('2 res')
                 return 2;
             }
         }
         else {
-            console.log('0 rres')
             return 0;
         }
     }
@@ -67,9 +64,7 @@ class AuctionManager {
     }
 
     async finishAuction(item){
-        console.log('enter in finish auction')
         if(await db.dbw.isAuctionAvailable(item)){
-            console.log('Entró o no?')
             await db.dbw.setFinished(item, true);
             await db.dbw.addLog(item, item + " has been finished");
             return 1;

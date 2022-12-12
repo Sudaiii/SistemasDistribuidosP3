@@ -161,9 +161,7 @@ class DBWrapper {
     }
 
     async isAuctionAvailable(item){
-        console.log(item);
         const query = { item: item, finished: false}
-        console.log(await this.auctionCollection.count(query)+'Esta cosa')
         return await this.auctionCollection.count(query) > 0;
     }
 

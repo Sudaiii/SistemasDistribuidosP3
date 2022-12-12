@@ -69,10 +69,7 @@ io.on('connection', async (socket) => {
         //      item: item of the auction
         console.log(socket.id + ': ' + user + ' joins ' + data.item);
         let result = await auctionManager.addUserToAuction(data.item, user);
-        //console.log(data)
-        //console.log(result);
         if(result == 2){
-
             socket.join(data.item);
             socket.emit('result', 'Success: User joined auction');
             if(role !== 'hammerman'){
@@ -109,7 +106,6 @@ io.on('connection', async (socket) => {
         // data:
         //      item: item of the auction
         //      amount: amount offered
-        console.log(data);
         console.log(socket.id + ': ' + user + ' offers ' + data.item +' amount ' + data.amount);
         if(role === 'hammerman'){
             socket.emit('result', 'Error: Hammerman is not authorized to make offers');
@@ -162,7 +158,6 @@ io.on('connection', async (socket) => {
         //      message: the message the hammerman wants to communicate
         console.log(socket.id + ': ' + data.message);
         if(role === 'hammerman'){
-            console.log('in o no?')
             socket.emit('result', 'Success: Message sent');
             io.to(data.item).emit('message', ('HammerMessage' + data.message));
         }
@@ -171,19 +166,19 @@ io.on('connection', async (socket) => {
         }
     });
     //Test case
-    socket.on('chat message', async (data) => {
-        console.log(user)
-        console.log(data);
-        if(data == "join"){
-            await auctionManager.addUserToAuction("Tallarines", user);
-        }
-        else if(data == "leave"){
-            await auctionManager.removeUserFromAuction("Tallarines", user)
-        }
-        else if(data == "offer"){
-            await auctionManager.offer("Tallarines", user, 555);
-        }
-    });
+    // socket.on('chat message', async (data) => {
+    //     console.log(user)
+    //     console.log(data);
+    //     if(data == "join"){
+    //         await auctionManager.addUserToAuction("Tallarines", user);
+    //     }
+    //     else if(data == "leave"){
+    //         await auctionManager.removeUserFromAuction("Tallarines", user)
+    //     }
+    //     else if(data == "offer"){
+    //         await auctionManager.offer("Tallarines", user, 555);
+    //     }
+    // });
 });
 
 app.get('/', (req, res) => {
