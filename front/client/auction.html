@@ -282,8 +282,8 @@
     <script src="/socket.io/client-dist/socket.io.js"></script>
     <script>
         let base = 'http://192.168.0.30'
-        const userData= JSON.parse(localStorage.getItem('user'));
-        const data= JSON.parse(localStorage.getItem('item'));
+        const userData= JSON.parse(sessionStorage.getItem('user'));
+        const data= JSON.parse(sessionStorage.getItem('item'));
         let socket = io(base + ':3000', { transports: [ "websocket" ] });
         let form = document.getElementById('form');
         let input = document.getElementById('input');

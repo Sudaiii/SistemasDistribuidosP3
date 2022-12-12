@@ -93,7 +93,7 @@
     <script>
         let base = 'http://192.168.0.30'
         let socket = io(base + ':3000', { transports: [ "websocket" ] });
-        const user= JSON.parse(localStorage.getItem('user')).user;
+        const user= JSON.parse(sessionStorage.getItem('user')).user;
         socket.on('handshake', function(msg) {
             socket.emit('identify', {'user': user});
         });
@@ -129,7 +129,7 @@
                         buttonAuction.textContent = 'ENTER';
                         buttonAuction.setAttribute('id', `${item.item}`)
                         buttonAuction.onclick = function (){
-                            localStorage.setItem('item', JSON.stringify({item}));
+                            sessionStorage.setItem('item', JSON.stringify({item}));
                             window.location.assign('http://192.168.0.30:3002/auction');
                         };
                         if (item.finished){
