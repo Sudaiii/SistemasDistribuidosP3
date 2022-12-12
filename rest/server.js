@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 //const uri = "mongodb://localhost:27017/aunt-rich"
 const uri = process.env.DB_CONNECTION;
+//const uri =  'mongodb://192.168.0.20:27017,192.168.0.19:27017,192.168.0.21:27017/aunt-rich?replicaSet=amongo'
 
 // Router Imports
 const auctionRouter = require('./routes/auctionRouter');

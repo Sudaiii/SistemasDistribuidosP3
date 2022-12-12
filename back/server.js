@@ -56,6 +56,7 @@ io.on('connection', async (socket) => {
             console.log(socket.id + " is " + role);
         }
         let auctions = await auctionManager.getUserAuctions(user);
+        console.log(auctions);
         if(auctions.hasOwnProperty('Auctions')){
             for (const auction of auctions.Auctions) {
                 socket.join(auction);
@@ -67,8 +68,11 @@ io.on('connection', async (socket) => {
         // data:
         //      item: item of the auction
         console.log(socket.id + ': ' + user + ' joins ' + data.item);
-        let result = await auctionManager.addUserToAuction(user, data.item);
+        let result = await auctionManager.addUserToAuction(data.item, user);
+        //console.log(data)
+        //console.log(result);
         if(result == 2){
+
             socket.join(data.item);
             socket.emit('result', 'Success: User joined auction');
             if(role !== 'hammerman'){
@@ -86,7 +90,7 @@ io.on('connection', async (socket) => {
         // data:
         //      item: item of the auction
         console.log(socket.id + ': ' + user + ' leaves ' + data.item);
-        let result = await auctionManager.removeUserFromAuction(user, data.item);
+        let result = await auctionManager.removeUserFromAuction(data.item, user);
         if(result == 2){
             socket.leave(data.item);
             socket.emit('result', 'Success: User left auction');
@@ -111,7 +115,7 @@ io.on('connection', async (socket) => {
             socket.emit('result', 'Error: Hammerman is not authorized to make offers');
         }
         else{
-            let result = await auctionManager.offer(user, data.item, data.amount);
+            let result = await auctionManager.offer(data.item, user, data.amount);
             if(result == 3){
                 socket.emit('result', 'Success: Offer of ' + data.amount + 'made for ' + data.item);
                 io.to(data.item).emit('message', (user + ' has offered ' + data.amount));
@@ -137,9 +141,10 @@ io.on('connection', async (socket) => {
                 socket.emit('result', 'Success: Auction finished');
                 let winner = await auctionManager.getAuctionWinner(data.item);
                 io.to(data.item).emit('message',
-                    ('La subasta ha finalizado' +
-                        'Ganador: ' + winner.Offeror +
-                        'Oferta: ' + winner.Offer));
+                    ('The auction is over.' +
+                        ' Winner: ' + winner.Offeror +
+                        ', Final bid: ' + winner.Offer));
+                console.log('Winner: ' + winner.Offeror + ', Final bid: ' + winner.Offer);
                 io.to(winner.Offeror).emit('notification', ('Won auction ' + data.item));
             }
             else{
@@ -157,8 +162,9 @@ io.on('connection', async (socket) => {
         //      message: the message the hammerman wants to communicate
         console.log(socket.id + ': ' + data.message);
         if(role === 'hammerman'){
+            console.log('in o no?')
             socket.emit('result', 'Success: Message sent');
-            io.to(data.item).emit('message', (data.message));
+            io.to(data.item).emit('message', ('HammerMessage' + data.message));
         }
         else{
             socket.emit('result', 'Error: User not authorized');

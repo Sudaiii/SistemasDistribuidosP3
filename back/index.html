@@ -39,7 +39,7 @@
             });
 
             socket.on('handshake', function(msg) {
-                socket.emit('identify', {'user': 'test'});
+                socket.emit('identify', {'user': user});
             });
         </script>
     </body>
