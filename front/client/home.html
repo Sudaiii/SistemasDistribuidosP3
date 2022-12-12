@@ -130,7 +130,7 @@
                         buttonAuction.setAttribute('id', `${item.item}`)
                         buttonAuction.onclick = function (){
                             localStorage.setItem('item', JSON.stringify({item}));
-                            window.location.assign('http://192.168.0.30:3002/home');
+                            window.location.assign('http://192.168.0.30:3002/auction');
                         };
                         if (item.finished){
                             buttonAuction.disabled = true;
